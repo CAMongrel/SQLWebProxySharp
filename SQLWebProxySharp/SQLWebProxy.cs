@@ -7,7 +7,7 @@ using System.Web;
 
 namespace MongrelWebServer
 {
-	class SQLWebProxy
+	public class SQLWebProxy
 	{
 		private Webserver webserver;
 
@@ -43,12 +43,12 @@ namespace MongrelWebServer
 			return responseString;
 		}
 
-		internal void Start()
+		public void Start()
 		{
 			webserver.Start();
 		}
 
-		internal void Stop()
+		public void Stop()
 		{
 			webserver.Stop();
 		}
