@@ -8,8 +8,8 @@
     <ProjectGuid>{98A8C437-34B6-462D-80E6-4EC8AD4AF248}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MongrelWebServer</RootNamespace>
-    <AssemblyName>MongrelWebServer</AssemblyName>
+    <RootNamespace>SQLWebProxySharpTest</RootNamespace>
+    <AssemblyName>SQLWebProxySharpTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
