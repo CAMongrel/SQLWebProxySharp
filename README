@@ -9,7 +9,7 @@ There is currently no security mechanism, so I strongly recommend to NOT use thi
 Reasoning
 =========
 
-This project is written for a little Metro style application. Since Metro apps can't access MySQL servers directly, I was in need for something different to allow my Metro app the MySQL backend.
+This project is written for a Metro style application. Since Metro apps can't access MySQL servers directly, I was in need for something different to allow my Metro app access to the MySQL backend.
 
 
 TODO
