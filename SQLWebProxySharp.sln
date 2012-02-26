@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLWebProxySharpTest", "SQL
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Github", "Github", "{2A0E1099-821B-4E05-92DD-77BB347206BC}"
 	ProjectSection(SolutionItems) = preProject
+		AUTHORS = AUTHORS
+		LICENSE = LICENSE
 		README = README
 	EndProjectSection
 EndProject
