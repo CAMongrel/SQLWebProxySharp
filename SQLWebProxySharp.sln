@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongrelWebServer", "MongrelWebServer\MongrelWebServer.csproj", "{98A8C437-34B6-462D-80E6-4EC8AD4AF248}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLWebProxySharpTest", "SQLWebProxySharpTest\SQLWebProxySharpTest.csproj", "{98A8C437-34B6-462D-80E6-4EC8AD4AF248}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
