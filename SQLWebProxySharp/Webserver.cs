@@ -7,7 +7,7 @@ using System.Threading;
 using System.Web;
 using System.Collections.Specialized;
 
-namespace MongrelWebServer
+namespace SQLWebProxySharp
 {
 	public delegate void LogOutputDelegate(string logLine);
 	public delegate string ReceiveRequestDelegate(HttpListenerRequest request);
