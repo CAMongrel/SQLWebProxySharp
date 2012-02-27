@@ -43,6 +43,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.IO;
+using SQLWebProxySharpEntities.Entities;
 
 namespace SQLWebProxySharpClient
 {
@@ -86,42 +87,28 @@ namespace SQLWebProxySharpClient
 			}
 		}
 
-		public void Open(string serverAdress, string userName, string password, string database, int port = 3306)
-		{
-			CheckSettings();
-
-			string connString = string.Format("server={0};user={1};database={2};port={4};password={3};",
-					serverAdress, userName, database, password, port.ToString());
-
-			string response = GetResponse(RemoteServer + "?mode=open&connString=" + connString);
-		}
-
-		public void Close()
-		{
-			CheckSettings();
-
-			string response = GetResponse(RemoteServer + "?mode=close");
-		}
-
-		public void ExecuteReader(string query)
+        public SQLWebProxyResult ExecuteReader(string query)
 		{
 			CheckSettings();
 
 			string response = GetResponse(RemoteServer + "?mode=reader&query=" + query);
+            return SQLWebProxyResult.FromXml(response);
 		}
 
-		public void ExecuteScalar(string query)
+        public SQLWebProxyResult ExecuteScalar(string query)
 		{
 			CheckSettings();
 
 			string response = GetResponse(RemoteServer + "?mode=scalar&query=" + query);
-		}
+            return SQLWebProxyResult.FromXml(response);
+        }
 
-		public void ExecuteNonQuery(string query)
+        public SQLWebProxyResult ExecuteNonQuery(string query)
 		{
 			CheckSettings();
 
 			string response = GetResponse(RemoteServer + "?mode=nonquery&query=" + query);
-		}
+            return SQLWebProxyResult.FromXml(response);
+        }
 	}
 }

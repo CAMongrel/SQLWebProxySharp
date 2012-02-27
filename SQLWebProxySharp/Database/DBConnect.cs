@@ -42,30 +42,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MySql.Data.MySqlClient;
+using SQLWebProxySharpEntities.Types;
 
-namespace SQLWebProxySharp
+namespace SQLWebProxySharp.Database
 {
-	internal class DBConnect
+    internal class DBConnect : IBackend
 	{
 		static MySqlConnection conn;
 
-		public static System.Data.ConnectionState State
+        public ConnectionState State
 		{
 			get
 			{
 				if (conn == null)
-					return System.Data.ConnectionState.Closed;
+                    return ConnectionState.Closed;
 
-				return conn.State;
+                switch (conn.State)
+                {
+                    default:
+                    case System.Data.ConnectionState.Closed:
+                        return ConnectionState.Closed;
+
+                    case System.Data.ConnectionState.Open:
+                        return ConnectionState.Open;
+                }
 			}
 		}
 
-		static DBConnect()
+		public DBConnect()
 		{
 			conn = null;
 		}
 
-		internal static void Connect(string ConnectionString)
+        public void Connect(string ConnectionString)
 		{
 			if (conn != null && conn.State != System.Data.ConnectionState.Closed)
 				return;
@@ -75,27 +84,43 @@ namespace SQLWebProxySharp
 			conn.Open();
 		}
 
-		internal static void Close()
+        public void Close()
 		{
-			if (State != System.Data.ConnectionState.Open)
+			if (State != ConnectionState.Open)
 				throw new InvalidOperationException("Not connected!");
 
 			conn.Close();
 		}
 
-		internal static MySqlDataReader ExecuteReader(string query)
+        private MySqlDataReader InternalExecuteReader(string query)
 		{
-			if (State != System.Data.ConnectionState.Open)
-				throw new InvalidOperationException("Not connected!");
-
 			MySqlCommand cmd = conn.CreateCommand();
 			cmd.CommandText = query;
 			return cmd.ExecuteReader();
 		}
 
-		internal static int ExecuteNonQuery(string query)
+        public object[][] ExecuteReader(string query)
+        {
+            if (State != ConnectionState.Open)
+                throw new InvalidOperationException("Not connected!");
+
+            MySqlDataReader reader = InternalExecuteReader(query);
+
+            List<object[]> resultArray = new List<object[]>();
+            while (reader.Read())
+            {
+                object[] row = new object[reader.VisibleFieldCount];
+                for (int i = 0; i < reader.VisibleFieldCount; i++)
+                    row[i] = reader.GetValue(i);
+                resultArray.Add(row);
+            }
+
+            return resultArray.ToArray();
+        }
+
+        public int ExecuteNonQuery(string query)
 		{
-			if (State != System.Data.ConnectionState.Open)
+			if (State != ConnectionState.Open)
 				throw new InvalidOperationException("Not connected!");
 
 			MySqlCommand cmd = conn.CreateCommand();
@@ -103,9 +128,9 @@ namespace SQLWebProxySharp
 			return cmd.ExecuteNonQuery();
 		}
 
-		internal static object ExecuteScalar(string query)
+        public object ExecuteScalar(string query)
 		{
-			if (State != System.Data.ConnectionState.Open)
+			if (State != ConnectionState.Open)
 				throw new InvalidOperationException("Not connected!");
 
 			MySqlCommand cmd = conn.CreateCommand();

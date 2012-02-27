@@ -44,6 +44,12 @@
     <Compile Include="SQLWebProxyClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SQLWebProxyEntities\SQLWebProxySharpEntities.csproj">
+      <Project>{FC9C023B-0E58-4EAB-9555-005D4B8F2FE1}</Project>
+      <Name>SQLWebProxySharpEntities</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -44,17 +44,47 @@ using System.Text;
 using System.Collections.Specialized;
 using System.Web;
 using MySql.Data.MySqlClient;
+using SQLWebProxySharp.Database;
+using SQLWebProxySharpEntities.Entities;
+using SQLWebProxySharpEntities.Types;
 
 namespace SQLWebProxySharp
 {
 	public class SQLWebProxy
 	{
 		private Webserver webserver;
+        private IBackend backend;
 
 		public event LogOutputDelegate OnLogOutput;
 
-		public SQLWebProxy(string listenServer = "localhost", int listenPort = 8080)
+        private string serverAddress;
+        private string userName;
+        private string database;
+        private string password;
+        private int serverPort;
+
+        private string ConnectionString
+        {
+            get
+            {
+                return string.Format("server={0};user={1};database={2};port={4};password={3};",
+                    serverAddress, userName, database, password, serverPort.ToString());
+            }
+        }
+
+        #region Constructor
+        public SQLWebProxy(string SQLServerAddress, string SQLUserName, string SQLDatabase, string SQLUserPassword, int SQLPort,
+            string listenServer = "localhost", int listenPort = 8080)
 		{
+            serverAddress = SQLServerAddress;
+            userName = SQLUserName;
+            database = SQLDatabase;
+            password = SQLUserPassword;
+            serverPort = SQLPort;
+
+            //backend = new DBConnect();
+            backend = new DummyConnect();
+
 			webserver = new Webserver();
 			webserver.OnLogOutput += (line) =>
 				{
@@ -64,151 +94,84 @@ namespace SQLWebProxySharp
 			webserver.OnReceiveRequest += webserver_OnReceiveRequest;
 			webserver.AddPrefix("http://" + listenServer + ":" + listenPort + "/");
 		}
+        #endregion
 
-		private string ConstructError(string errorMessage)
+        #region Helper methods
+        private string ConstructError(string errorMessage)
 		{
-			return "<SQLWebProxyResult><Error>" + errorMessage + "</Error></SQLWebProxyResult>";
+            SQLWebProxyResultError error = new SQLWebProxyResultError();
+            error.Error = errorMessage;
+            return error.ToXml();
 		}
 
 		private string ConstructOk()
 		{
-			return "<SQLWebProxyResult><Ok /></SQLWebProxyResult>";
+            SQLWebProxyResultOk ok = new SQLWebProxyResultOk();
+            return ok.ToXml();
 		}
 
 		private string ConstructReader(object[][] rows)
 		{
-			int rowCount = rows.Length;
-			int fieldCount = 0;
-			if (rows.Length > 0)
-				fieldCount = rows[0].Length;
-
-			string result = "<SQLWebProxyResult>";
-			result += "<Reader RowCount=\"" + rowCount + "\" FieldCount=\"" + fieldCount + "\">";
-			for (int i = 0; i < rows.Length; i++)
-			{
-				result += "<Row>";
-				for (int j = 0; j < rows[i].Length; j++)
-				{
-					object obj = rows[i][j];
-					string typeName = "null";
-					if (obj != null)
-						typeName = obj.GetType().Name;
-
-					result += "<Column Type=\"" + typeName + "\">" + obj + "</Column>";
-				}
-				result += "</Row>";
-			}
-			result += "</Reader>";
-			result += "<SQLWebProxyResult>";
-
-			return result;
+            SQLWebProxyResultReader reader = new SQLWebProxyResultReader();
+            reader.Rows = rows;
+            return reader.ToXml();
 		}
 
 		private string ConstructScalar(object obj)
 		{
-			string typeName = "null";
-			if (obj != null)
-				typeName = obj.GetType().Name;
-
-			return "<SQLWebProxyResult><Scalar Type=\"" + typeName + "\">" + obj + "</Scalar></SQLWebProxyResult>";
+            SQLWebProxyResultScalar scalar = new SQLWebProxyResultScalar();
+            scalar.ScalarValue = obj;
+            return scalar.ToXml();
 		}
 
 		private string ConstructNonQuery(int result)
 		{
-			return "<SQLWebProxyResult><NonQuery>" + result.ToString() + "</NonQuery></SQLWebProxyResult>";
+            SQLWebProxyResultNonQuery nonquery = new SQLWebProxyResultNonQuery();
+            nonquery.Value = result;
+            return nonquery.ToXml();
 		}
+        #endregion
 
-		private string webserver_OnReceiveRequest(System.Net.HttpListenerRequest request)
+        #region Handle request
+        private string webserver_OnReceiveRequest(System.Net.HttpListenerRequest request)
 		{
 			Uri uri = request.Url;
 			NameValueCollection parameters = HttpUtility.ParseQueryString(uri.Query);
 			string mode = parameters["mode"];
+            string query = parameters["query"];
+
+            if (OnLogOutput != null)
+                OnLogOutput(string.Format("Received request for mode '{0}' with query '{1}'", mode, query));
 
 			switch (mode)
 			{
 				case null:
 					return ConstructError("NO_MODE");
 
-				case "open":
-					{
-						if (DBConnect.State != System.Data.ConnectionState.Closed)
-							return ConstructError("ALREADY_CONNECTED");
-
-						string connString = parameters["connString"];
-						try
-						{
-							DBConnect.Connect(connString);
-						}
-						catch (Exception ex)
-						{
-							return ConstructError("EXCEPTION: " + ex.ToString());
-						}
-
-						if (DBConnect.State == System.Data.ConnectionState.Open)
-							return ConstructOk();
-
-						return ConstructError("CONNECT_FAILED");
-					}
-
-				case "close":
-					{
-						if (DBConnect.State != System.Data.ConnectionState.Open)
-							return ConstructError("NOT_CONNECTED");
-
-						try
-						{
-							DBConnect.Close();
-						}
-						catch (Exception ex)
-						{
-							return ConstructError("EXCEPTION: " + ex.ToString());
-						}
-
-						if (DBConnect.State == System.Data.ConnectionState.Closed)
-							return ConstructOk();
-
-						return ConstructError("DISCONNECT_FAILED");
-					}
-
 				case "reader":
 					{
-						if (DBConnect.State != System.Data.ConnectionState.Open)
+                        if (backend.State != ConnectionState.Open)
 							return ConstructError("NOT_CONNECTED");
-
-						string query = parameters["query"];
 
 						try
 						{
-							MySqlDataReader reader = DBConnect.ExecuteReader(query);
-
-							List<object[]> resultArray = new List<object[]>();
-							while (reader.Read())
-							{
-								object[] row = new object[reader.VisibleFieldCount];
-								for (int i = 0; i < reader.VisibleFieldCount; i++)
-									row[i] = reader.GetValue(i);
-								resultArray.Add(row);
-							}
-
-							return ConstructReader(resultArray.ToArray());
+                            object[][] rows = backend.ExecuteReader(query);
+                            return ConstructReader(rows);
 						}
 						catch (Exception ex)
 						{
 							return ConstructError("EXCEPTION: " + ex.ToString());
 						}
 					}
-					break;
 
 				case "scalar":
 					{
-						if (DBConnect.State != System.Data.ConnectionState.Open)
+                        if (backend.State != ConnectionState.Open)
 							return ConstructError("NOT_CONNECTED");
-
-						string query = parameters["query"];
 
 						try
 						{
-							object result = DBConnect.ExecuteScalar(query);
+                            object result = backend.ExecuteScalar(query);
 							return ConstructScalar(result);
 						}
 						catch (Exception ex)
@@ -219,14 +182,12 @@ namespace SQLWebProxySharp
 
 				case "nonquery":
 					{
-						if (DBConnect.State != System.Data.ConnectionState.Open)
+                        if (backend.State != ConnectionState.Open)
 							return ConstructError("NOT_CONNECTED");
-
-						string query = parameters["query"];
 
 						try
 						{
-							int result = DBConnect.ExecuteNonQuery(query);
+                            int result = backend.ExecuteNonQuery(query);
 							return ConstructNonQuery(result);
 						}
 						catch (Exception ex)
@@ -237,18 +198,30 @@ namespace SQLWebProxySharp
 			}
 
 			// Empty response
-			string responseString = "<SQLWebProxyResult></SQLWebProxyResult>";
-			return responseString;
+			return ConstructError("DONT_KNOW_HOW_TO_HANDLE_REQUEST");
 		}
+        #endregion
 
-		public void Start()
+        #region Start/Stop
+        public void Start()
 		{
 			webserver.Start();
+
+            backend.Connect(ConnectionString);
+
+            if (OnLogOutput != null)
+                OnLogOutput("Connected to Backend");
 		}
 
 		public void Stop()
 		{
+            backend.Close();
+
+            if (OnLogOutput != null)
+                OnLogOutput("Backend closed");
+
 			webserver.Stop();
-		}
-	}
+        }
+        #endregion
+    }
 }

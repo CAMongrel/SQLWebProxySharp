@@ -14,9 +14,6 @@
             <Button Content="Stop" Width="100" HorizontalAlignment="Left" Margin="5" Click="Button_Stop_Click" />
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Label MinWidth="80">Client:</Label>
-            <Button Content="Open" Width="100" HorizontalAlignment="Left" Margin="5" Click="Button_Open_Click" />
-            <Button Content="Close" Width="100" HorizontalAlignment="Left" Margin="5" Click="Button_Close_Click" />
             <Label>Query:</Label>
             <TextBox Name="queryBox" MinWidth="150" />
             <Button Content="Reader" Width="65" HorizontalAlignment="Left" Margin="5" Click="Button_Reader_Click" />
