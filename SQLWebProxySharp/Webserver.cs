@@ -104,9 +104,7 @@ namespace SQLWebProxySharp
 					HttpListenerRequest request = context.Request;
 
 					// Construct a response.
-					string responseString = "<HTML><BODY>";
-					responseString += request.RawUrl;
-					responseString += "</BODY></HTML>";
+                    string responseString = "<HTML><BODY></BODY></HTML>";
 
 					if (OnReceiveRequest != null)
 						responseString = OnReceiveRequest(request);

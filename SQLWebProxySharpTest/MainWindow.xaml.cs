@@ -54,6 +54,7 @@ using SQLWebProxySharpClient;
 using SQLWebProxySharp;
 using System.Xml;
 using SQLWebProxySharpEntities.Entities;
+using System.Threading;
 
 namespace SQLWebProxySharpTest
 {
@@ -66,7 +67,7 @@ namespace SQLWebProxySharpTest
 	public partial class MainWindow : Window
 	{
 		private SQLWebProxyClient client;
-		//private SQLWebProxy server;
+		private SQLWebProxy server;
 
 		public MainWindow()
 		{
@@ -76,20 +77,20 @@ namespace SQLWebProxySharpTest
 
 			this.Closing += (s, e) =>
 				{
-					//server.Stop();
+					server.Stop();
 				};
 
 			// NOTE: The constructor of SQLWebProxy uses default settings. You might want to
 			// override these and should edit the .config file to provide valid settings here
-            /*server = new SQLWebProxy(Properties.Settings.Default.ServerAddress, Properties.Settings.Default.ServerUsername,
+            server = new SQLWebProxy(Properties.Settings.Default.ServerAddress, Properties.Settings.Default.ServerUsername,
                 Properties.Settings.Default.ServerPassword, Properties.Settings.Default.ServerDatabase, Properties.Settings.Default.ServerPort);
 			server.OnLogOutput += (line) =>
 				{
-					Dispatcher.Invoke(new Action(() =>
-						{
-							textBox1.Text += line + "\r\n";
-						}));
-				};*/
+                    Dispatcher.Invoke(new Action(() =>
+                        {
+                            textBox1.Text += line + "\r\n";
+                        }));
+				};
 
             Properties.Settings.Default.RemoteAddress = "localhost";
             Properties.Settings.Default.RemotePort = 8080;
@@ -147,12 +148,12 @@ namespace SQLWebProxySharpTest
 
 		private void Button_Start_Click(object sender, RoutedEventArgs e)
 		{
-			//server.Start();
+			server.Start();
 		}
 
 		private void Button_Stop_Click(object sender, RoutedEventArgs e)
 		{
-			//server.Stop();
+			server.Stop();
 		}
 
 		private void Button_Reader_Click(object sender, RoutedEventArgs e)

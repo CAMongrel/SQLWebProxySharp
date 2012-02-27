@@ -47,6 +47,7 @@ using MySql.Data.MySqlClient;
 using SQLWebProxySharp.Database;
 using SQLWebProxySharpEntities.Entities;
 using SQLWebProxySharpEntities.Types;
+using System.IO;
 
 namespace SQLWebProxySharp
 {
@@ -136,12 +137,16 @@ namespace SQLWebProxySharp
         private string webserver_OnReceiveRequest(System.Net.HttpListenerRequest request)
 		{
 			Uri uri = request.Url;
-			NameValueCollection parameters = HttpUtility.ParseQueryString(uri.Query);
-			string mode = parameters["mode"];
-            string query = parameters["query"];
+			string mode = uri.Segments[1];
+            
+            string query = "";
+            using (StreamReader reader = new StreamReader(request.InputStream))
+            {
+                query = reader.ReadLine();
+            }
 
-            if (OnLogOutput != null)
-                OnLogOutput(string.Format("Received request for mode '{0}' with query '{1}'", mode, query));
+            //if (OnLogOutput != null)
+            //    OnLogOutput(string.Format("Received request for mode '{0}' with query '{1}'", mode, query));
 
 			switch (mode)
 			{

@@ -77,9 +77,14 @@ namespace SQLWebProxySharpClient
 				throw new Exception("RemotePort not set (must be a valid server port, e.g. 8080)");
 		}
 
-		private string GetResponse(string uriQuery)
+		private string GetResponse(string uri, string query)
 		{
-			HttpWebRequest request = HttpWebRequest.Create(uriQuery) as HttpWebRequest;
+			HttpWebRequest request = HttpWebRequest.Create(uri) as HttpWebRequest;
+            request.Method = "POST";
+            using (StreamWriter writer = new StreamWriter(request.GetRequestStream()))
+            {
+                writer.WriteLine(query);
+            }
 			HttpWebResponse response = request.GetResponse() as HttpWebResponse;
 			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
 			{
@@ -91,7 +96,7 @@ namespace SQLWebProxySharpClient
 		{
 			CheckSettings();
 
-			string response = GetResponse(RemoteServer + "?mode=reader&query=" + query);
+			string response = GetResponse(RemoteServer + "reader", query);
             return SQLWebProxyResult.FromXml(response);
 		}
 
@@ -99,7 +104,7 @@ namespace SQLWebProxySharpClient
 		{
 			CheckSettings();
 
-			string response = GetResponse(RemoteServer + "?mode=scalar&query=" + query);
+            string response = GetResponse(RemoteServer + "scalar", query);
             return SQLWebProxyResult.FromXml(response);
         }
 
@@ -107,7 +112,7 @@ namespace SQLWebProxySharpClient
 		{
 			CheckSettings();
 
-			string response = GetResponse(RemoteServer + "?mode=nonquery&query=" + query);
+            string response = GetResponse(RemoteServer + "nonquery", query);
             return SQLWebProxyResult.FromXml(response);
         }
 	}
