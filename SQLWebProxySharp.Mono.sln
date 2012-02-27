@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLWebProxySharpEntities", "SQLWebProxyEntities\SQLWebProxySharpEntities.csproj", "{FC9C023B-0E58-4EAB-9555-005D4B8F2FE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLWebProxySharp", "SQLWebProxySharp\SQLWebProxySharp.csproj", "{15127202-885A-4F00-BD4D-2CE8DB6250C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLWebProxySharpClient", "SQLWebProxySharpClient\SQLWebProxySharpClient.csproj", "{DF537A7A-1FF1-4035-B632-0856F8928B2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLWebProxySharpCommandLineServer", "SQLWebProxySharpCommandLineServer\SQLWebProxySharpCommandLineServer.csproj", "{9AC0B8B6-0000-4811-98C6-B4CB08207FA5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15127202-885A-4F00-BD4D-2CE8DB6250C3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{15127202-885A-4F00-BD4D-2CE8DB6250C3}.Debug|x86.Build.0 = Debug|Any CPU
+		{15127202-885A-4F00-BD4D-2CE8DB6250C3}.Release|x86.ActiveCfg = Release|Any CPU
+		{15127202-885A-4F00-BD4D-2CE8DB6250C3}.Release|x86.Build.0 = Release|Any CPU
+		{9AC0B8B6-0000-4811-98C6-B4CB08207FA5}.Debug|x86.ActiveCfg = Debug|x86
+		{9AC0B8B6-0000-4811-98C6-B4CB08207FA5}.Debug|x86.Build.0 = Debug|x86
+		{9AC0B8B6-0000-4811-98C6-B4CB08207FA5}.Release|x86.ActiveCfg = Release|x86
+		{9AC0B8B6-0000-4811-98C6-B4CB08207FA5}.Release|x86.Build.0 = Release|x86
+		{DF537A7A-1FF1-4035-B632-0856F8928B2A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DF537A7A-1FF1-4035-B632-0856F8928B2A}.Debug|x86.Build.0 = Debug|Any CPU
+		{DF537A7A-1FF1-4035-B632-0856F8928B2A}.Release|x86.ActiveCfg = Release|Any CPU
+		{DF537A7A-1FF1-4035-B632-0856F8928B2A}.Release|x86.Build.0 = Release|Any CPU
+		{FC9C023B-0E58-4EAB-9555-005D4B8F2FE1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FC9C023B-0E58-4EAB-9555-005D4B8F2FE1}.Debug|x86.Build.0 = Debug|Any CPU
+		{FC9C023B-0E58-4EAB-9555-005D4B8F2FE1}.Release|x86.ActiveCfg = Release|Any CPU
+		{FC9C023B-0E58-4EAB-9555-005D4B8F2FE1}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = SQLWebProxySharpCommandLineServer\SQLWebProxySharpCommandLineServer.csproj
+	EndGlobalSection
+EndGlobal
