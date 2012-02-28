@@ -44,7 +44,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SQLWebProxyEntities\SQLWebProxySharpEntities.csproj">
+    <ProjectReference Include="..\SQLWebProxySharpEntities\SQLWebProxySharpEntities.csproj">
       <Project>{FC9C023B-0E58-4EAB-9555-005D4B8F2FE1}</Project>
       <Name>SQLWebProxySharpEntities</Name>
     </ProjectReference>

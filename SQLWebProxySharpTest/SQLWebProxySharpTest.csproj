@@ -95,13 +95,13 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SQLWebProxyEntities\SQLWebProxySharpEntities.csproj">
-      <Project>{FC9C023B-0E58-4EAB-9555-005D4B8F2FE1}</Project>
-      <Name>SQLWebProxySharpEntities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SQLWebProxySharpClient\SQLWebProxySharpClient.csproj">
       <Project>{DF537A7A-1FF1-4035-B632-0856F8928B2A}</Project>
       <Name>SQLWebProxySharpClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SQLWebProxySharpEntities\SQLWebProxySharpEntities.csproj">
+      <Project>{FC9C023B-0E58-4EAB-9555-005D4B8F2FE1}</Project>
+      <Name>SQLWebProxySharpEntities</Name>
     </ProjectReference>
     <ProjectReference Include="..\SQLWebProxySharp\SQLWebProxySharp.csproj">
       <Project>{15127202-885A-4F00-BD4D-2CE8DB6250C3}</Project>
