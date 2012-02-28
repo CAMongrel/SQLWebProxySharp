@@ -59,6 +59,14 @@ namespace SQLWebProxySharp
 		public event LogOutputDelegate OnLogOutput;
 		public event ReceiveRequestDelegate OnReceiveRequest;
 
+		public string Prefixes
+		{
+			get
+			{
+				return string.Join(",", listener.Prefixes.ToArray());
+			}
+		}
+
 		public Webserver()
 		{
 			listener = new HttpListener();

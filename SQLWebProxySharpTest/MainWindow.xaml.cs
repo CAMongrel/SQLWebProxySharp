@@ -101,51 +101,6 @@ namespace SQLWebProxySharpTest
 			client.RemotePort = Properties.Settings.Default.RemotePort;
 		}
 
-        private static void TestSerialize()
-        {
-            SQLWebProxyResultOk ok = new SQLWebProxyResultOk();
-            string xml = ok.ToXml();
-
-            SQLWebProxyResultError error = new SQLWebProxyResultError();
-            error.Error = "Alles doof";
-            xml = error.ToXml();
-            error.Error = "Nu is weg";
-            error = SQLWebProxyResultError.FromXml(xml) as SQLWebProxyResultError;
-
-            SQLWebProxyResultNonQuery nonquery = new SQLWebProxyResultNonQuery();
-            nonquery.Value = 42;
-            xml = nonquery.ToXml();
-            nonquery.Value = 0;
-            nonquery = SQLWebProxyResultNonQuery.FromXml(xml) as SQLWebProxyResultNonQuery;
-
-            SQLWebProxyResultScalar scalar = new SQLWebProxyResultScalar();
-            scalar.ScalarValue = "Hallo Welt!";
-            xml = scalar.ToXml();
-            scalar.ScalarValue = null;
-            scalar = SQLWebProxyResultScalar.FromXml(xml) as SQLWebProxyResultScalar;
-
-            scalar = new SQLWebProxyResultScalar();
-            scalar.ScalarValue = (short)42;
-            xml = scalar.ToXml();
-            scalar.ScalarValue = null;
-            scalar = SQLWebProxyResultScalar.FromXml(xml) as SQLWebProxyResultScalar;
-
-            scalar = new SQLWebProxyResultScalar();
-            scalar.ScalarValue = 47.11;
-            xml = scalar.ToXml();
-            scalar.ScalarValue = null;
-            scalar = SQLWebProxyResultScalar.FromXml(xml) as SQLWebProxyResultScalar;
-
-            SQLWebProxyResultReader reader = new SQLWebProxyResultReader();
-            List<object[]> rowList = new List<object[]>();
-            rowList.Add(new object[] { 4711, "Test123", "Super", 0.01 });
-			rowList.Add(new object[] { 4711, 999, null, "Willi" });
-            reader.Rows = rowList.ToArray();
-            xml = reader.ToXml();
-            reader.Rows = null;
-            reader = SQLWebProxyResultReader.FromXml(xml) as SQLWebProxyResultReader;
-        }
-
 		private void Button_Start_Click(object sender, RoutedEventArgs e)
 		{
 			server.Start();
@@ -172,6 +127,51 @@ namespace SQLWebProxySharpTest
 		{
             SQLWebProxyResult result = client.ExecuteNonQuery(queryBox.Text);
             textBox1.Text += "Received: " + result + "\r\n";
+		}
+
+		private static void TestSerialize()
+		{
+			SQLWebProxyResultOk ok = new SQLWebProxyResultOk();
+			string xml = ok.ToXml();
+
+			SQLWebProxyResultError error = new SQLWebProxyResultError();
+			error.Error = "Alles doof";
+			xml = error.ToXml();
+			error.Error = "Nu is weg";
+			error = SQLWebProxyResultError.FromXml(xml) as SQLWebProxyResultError;
+
+			SQLWebProxyResultNonQuery nonquery = new SQLWebProxyResultNonQuery();
+			nonquery.Value = 42;
+			xml = nonquery.ToXml();
+			nonquery.Value = 0;
+			nonquery = SQLWebProxyResultNonQuery.FromXml(xml) as SQLWebProxyResultNonQuery;
+
+			SQLWebProxyResultScalar scalar = new SQLWebProxyResultScalar();
+			scalar.ScalarValue = "Hallo Welt!";
+			xml = scalar.ToXml();
+			scalar.ScalarValue = null;
+			scalar = SQLWebProxyResultScalar.FromXml(xml) as SQLWebProxyResultScalar;
+
+			scalar = new SQLWebProxyResultScalar();
+			scalar.ScalarValue = (short)42;
+			xml = scalar.ToXml();
+			scalar.ScalarValue = null;
+			scalar = SQLWebProxyResultScalar.FromXml(xml) as SQLWebProxyResultScalar;
+
+			scalar = new SQLWebProxyResultScalar();
+			scalar.ScalarValue = 47.11;
+			xml = scalar.ToXml();
+			scalar.ScalarValue = null;
+			scalar = SQLWebProxyResultScalar.FromXml(xml) as SQLWebProxyResultScalar;
+
+			SQLWebProxyResultReader reader = new SQLWebProxyResultReader();
+			List<object[]> rowList = new List<object[]>();
+			rowList.Add(new object[] { 4711, "Test123", "Super", 0.01 });
+			rowList.Add(new object[] { 4711, 999, null, "Willi" });
+			reader.Rows = rowList.ToArray();
+			xml = reader.ToXml();
+			reader.Rows = null;
+			reader = SQLWebProxyResultReader.FromXml(xml) as SQLWebProxyResultReader;
 		}
 	}
 }

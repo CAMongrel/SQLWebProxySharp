@@ -212,10 +212,13 @@ namespace SQLWebProxySharp
 		{
 			webserver.Start();
 
+			if (OnLogOutput != null)
+				OnLogOutput("Listening on " + webserver.Prefixes);
+
             backend.Connect(ConnectionString);
 
             if (OnLogOutput != null)
-                OnLogOutput("Connected to Backend");
+				OnLogOutput("Connected to Backend at " + ConnectionString + " using " + backend.GetType().Name);
 		}
 
 		public void Stop()
