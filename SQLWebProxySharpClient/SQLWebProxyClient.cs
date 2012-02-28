@@ -91,13 +91,14 @@ namespace SQLWebProxySharpClient
 		private ManualResetEvent allDone = new ManualResetEvent(false);
 		private string GetResponse(string uri, string query)
 		{
-			HttpWebRequest request = HttpWebRequest.Create(uri) as HttpWebRequest;
+            allDone.Reset();
+
+            HttpWebRequest request = HttpWebRequest.Create(uri) as HttpWebRequest;
             request.Method = "POST";
 
 			AsyncHelper asyncHlp = new AsyncHelper() { Query = query, Request = request };
 			request.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallback), asyncHlp);
 
-			allDone.Reset();
 			allDone.WaitOne();
 
 			return asyncHlp.Result;
