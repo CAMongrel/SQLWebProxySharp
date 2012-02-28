@@ -44,6 +44,7 @@ using System.Text;
 using System.Net;
 using System.IO;
 using SQLWebProxySharpEntities.Entities;
+using System.Threading;
 
 namespace SQLWebProxySharpClient
 {
@@ -52,6 +53,13 @@ namespace SQLWebProxySharpClient
 	/// </summary>
 	public class SQLWebProxyClient
 	{
+		class AsyncHelper
+		{
+			public HttpWebRequest Request;
+			public string Query;
+			public string Result;
+		}
+
 		public string RemoteAddress { get; set; }
 		public int RemotePort { get; set; }
 
@@ -77,22 +85,57 @@ namespace SQLWebProxySharpClient
 				throw new Exception("RemotePort not set (must be a valid server port, e.g. 8080)");
 		}
 
+		#region Asynchronous Request forced to be synchronous
+		// TODO: Use async/await
+		// NOTE: Keep it simple for now ... needs improvement
+		private ManualResetEvent allDone = new ManualResetEvent(false);
 		private string GetResponse(string uri, string query)
 		{
 			HttpWebRequest request = HttpWebRequest.Create(uri) as HttpWebRequest;
             request.Method = "POST";
-            using (StreamWriter writer = new StreamWriter(request.GetRequestStream()))
-            {
-                writer.WriteLine(query);
-            }
-			HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-			{
-				return reader.ReadToEnd();
-			}
+
+			AsyncHelper asyncHlp = new AsyncHelper() { Query = query, Request = request };
+			request.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallback), asyncHlp);
+
+			allDone.Reset();
+			allDone.WaitOne();
+
+			return asyncHlp.Result;
 		}
 
-        public SQLWebProxyResult ExecuteReader(string query)
+		private void GetRequestStreamCallback(IAsyncResult asynchronousResult)
+		{
+			AsyncHelper state = (AsyncHelper)asynchronousResult.AsyncState;
+
+			HttpWebRequest request = state.Request;
+			string query = state.Query;
+
+			using (StreamWriter writer = new StreamWriter(request.EndGetRequestStream(asynchronousResult)))
+			{
+				writer.WriteLine(query);
+			}
+
+			request.BeginGetResponse(new AsyncCallback(GetResponseCallback), state);
+		}
+
+		private void GetResponseCallback(IAsyncResult asynchronousResult)
+		{
+			AsyncHelper state = (AsyncHelper)asynchronousResult.AsyncState;
+
+			HttpWebRequest request = state.Request;
+
+			HttpWebResponse response = (HttpWebResponse)request.EndGetResponse(asynchronousResult);
+
+			using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+			{
+				state.Result = reader.ReadToEnd();
+			}
+
+			allDone.Set();
+		}
+		#endregion
+
+		public SQLWebProxyResult ExecuteReader(string query)
 		{
 			CheckSettings();
 
