@@ -138,8 +138,8 @@ namespace SQLWebProxySharpTest
 
             SQLWebProxyResultReader reader = new SQLWebProxyResultReader();
             List<object[]> rowList = new List<object[]>();
-            object[] row = new object[] { 4711, "Test123", "Super", 0.01 };
-            rowList.Add(row);
+            rowList.Add(new object[] { 4711, "Test123", "Super", 0.01 });
+			rowList.Add(new object[] { 4711, 999, null, "Willi" });
             reader.Rows = rowList.ToArray();
             xml = reader.ToXml();
             reader.Rows = null;

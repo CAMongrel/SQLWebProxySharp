@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace SQLWebProxySharpEntities.Entities
 {
@@ -17,21 +18,21 @@ namespace SQLWebProxySharpEntities.Entities
 
 		public string ToXml()
 		{
-			XmlDocument doc = CreateBaseDocument("Error");
+			XDocument doc = CreateBaseDocument("Error");
 
-			XmlElement errorElem = doc.CreateElement("Error");
-			errorElem.InnerText = Error;
-			doc.DocumentElement.AppendChild(errorElem);
+			XElement error = new XElement("Error");
+			error.Value = Error;
+			doc.Root.Add(error);
 
-			return doc.OuterXml;
+			return doc.ToString();
 		}
 
-		public static SQLWebProxyResult FromXml(XmlDocument xml)
+		public static SQLWebProxyResult FromXml(XDocument xml)
 		{
 			SQLWebProxyResultError result = new SQLWebProxyResultError();
 
-            XmlNode errorNode = xml.DocumentElement.SelectSingleNode("Error");
-            result.Error = errorNode.InnerText;
+            XElement errorNode = xml.Root.Element("Error");
+            result.Error = errorNode.Value;
 
 			return result;
 		}

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using SQLWebProxySharpEntities.Types;
+using System.Xml.Linq;
 
 namespace SQLWebProxySharpEntities.Entities
 {
@@ -18,64 +19,65 @@ namespace SQLWebProxySharpEntities.Entities
 
 		public string ToXml()
 		{
-            XmlDocument doc = CreateBaseDocument("Reader");
+			XDocument doc = CreateBaseDocument("Reader");
 
-            XmlElement rowsElem = doc.CreateElement("Rows");
+			int rowCount = 0;
+			int fieldCount = 0;
 
-            int rowCount = 0;
-            int fieldCount = 0;
+			if (Rows != null)
+			{
+				rowCount = Rows.Length;
 
-            if (Rows != null)
-            {
-                rowCount = Rows.Length;
+				if (rowCount > 0)
+					fieldCount = Rows[0].Length;
+			}
 
-                if (rowCount > 0)
-                    fieldCount = Rows[0].Length;
-            }
-
-            rowsElem.SetAttribute("RowCount", rowCount.ToString());
-            rowsElem.SetAttribute("FieldCount", fieldCount.ToString());
-
-            doc.DocumentElement.AppendChild(rowsElem);
+			XElement rowsElem = new XElement("Rows",
+				new XAttribute("RowCount", rowCount),
+				new XAttribute("FieldCount", fieldCount));
+			doc.Root.Add(rowsElem);
 
             for (int i = 0; i < rowCount; i++)
             {
-                XmlElement rowElem = doc.CreateElement("Row");
-                rowsElem.AppendChild(rowElem);
+				XElement rowElem = new XElement("Row");
+
+                rowsElem.Add(rowElem);
 
                 for (int j = 0; j < fieldCount; j++)
                 {
-                    XmlElement colElem = doc.CreateElement("Column");
-                    rowElem.AppendChild(colElem);
+                    XElement colElem = new XElement("Column");
+					rowElem.Add(colElem);
 
-                    colElem.InnerXml = TypeSerializer.Serialize(Rows[i][j]);
+                    colElem.Add(TypeSerializer.Serialize(Rows[i][j]));
                 }
             }
 
-			return doc.OuterXml;
+			return doc.ToString();
 		}
 
-		public static SQLWebProxyResult FromXml(XmlDocument xml)
+		public static SQLWebProxyResult FromXml(XDocument xml)
 		{
             SQLWebProxyResultReader result = new SQLWebProxyResultReader();
 
-            XmlNode rowsElem = xml.DocumentElement.SelectSingleNode("Rows");
+			XElement rowsElem = xml.Root.Element("Rows");
 
-            int rowCount = int.Parse(rowsElem.Attributes["RowCount"].InnerText);
-            int fieldCount = int.Parse(rowsElem.Attributes["FieldCount"].InnerText);
+			int rowCount = int.Parse(rowsElem.Attribute("RowCount").Value);
+            int fieldCount = int.Parse(rowsElem.Attribute("FieldCount").Value);
 
             result.Rows = new object[rowCount][];
 
-            for (int i = 0; i < rowCount; i++)
-            {
-                result.Rows[i] = new object[fieldCount];
+			int cnt = 0;
+			foreach (XElement rowNode in rowsElem.Elements())
+			{
+                result.Rows[cnt] = new object[fieldCount];
 
-                XmlNode rowNode = rowsElem.ChildNodes[i];
-                for (int j = 0; j < fieldCount; j++)
-                {
-                    XmlNode colNode = rowNode.ChildNodes[j];
-                    result.Rows[i][j] = TypeSerializer.Deserialize(colNode.FirstChild);
-                }
+				int cnt2 = 0;
+				foreach (XElement colNode in rowNode.Elements())
+				{
+					result.Rows[cnt][cnt2++] = TypeSerializer.Deserialize(colNode.Element("Value"));
+				}
+
+				cnt++;
             }
 
 			return result;

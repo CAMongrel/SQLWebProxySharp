@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml;
+using System.Xml.Linq;
 
 namespace SQLWebProxySharpEntities.Entities
 {
@@ -10,11 +10,11 @@ namespace SQLWebProxySharpEntities.Entities
 	{
         public string Type { get; private set; }
 
-		protected XmlDocument CreateBaseDocument(string setType)
+		protected XDocument CreateBaseDocument(string setType)
 		{
-			XmlDocument doc = new XmlDocument();
-			doc.AppendChild(doc.CreateElement("SQLWebProxyResult"));
-			doc.DocumentElement.SetAttribute("Type", setType);
+			XDocument doc = new XDocument(
+				new XElement("SQLWebProxyResult",
+					new XAttribute("Type", setType)));
 
             Type = setType;
 
@@ -23,13 +23,12 @@ namespace SQLWebProxySharpEntities.Entities
 
 		public static SQLWebProxyResult FromXml(string xml)
 		{
-			XmlDocument doc = new XmlDocument();
-			doc.LoadXml(xml);
+			XDocument doc = XDocument.Parse(xml);
 
-			if (doc.DocumentElement.Name != "SQLWebProxyResult")
+			if (doc.Root.Name != "SQLWebProxyResult")
 				throw new Exception("Invalid XML");
 
-			string type = doc.DocumentElement.GetAttribute("Type");
+			string type = doc.Root.Attribute("Type").Value;
 
 			SQLWebProxyResult result = null;
 

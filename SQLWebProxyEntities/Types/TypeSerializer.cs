@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace SQLWebProxySharpEntities.Types
 {
     internal class TypeSerializer
     {
-        public static string Serialize(object value)
+        public static XElement Serialize(object value)
         {
             string valueType = "null";
             if (value != null)
@@ -62,17 +63,19 @@ namespace SQLWebProxySharpEntities.Types
                     break;
             }
 
-            string result = "<Value Type=\"" + valueType + "\">" + valueValue + "</Value>";
+			XElement result = new XElement("Value",
+				new XAttribute("Type", valueType));
+			result.Value = valueValue;
             return result;
         }
 
-        public static object Deserialize(XmlNode node)
+        public static object Deserialize(XElement node)
         {
             if (node.Name != "Value")
                 return null;
 
-            string type = node.Attributes["Type"].InnerText;
-            string value = node.InnerText;
+            string type = node.Attribute("Type").Value;
+            string value = node.Value;
 
             switch (type)
             {

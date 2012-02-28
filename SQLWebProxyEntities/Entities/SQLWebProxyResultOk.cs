@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace SQLWebProxySharpEntities.Entities
 {
@@ -10,9 +11,9 @@ namespace SQLWebProxySharpEntities.Entities
 	{
 		public string ToXml()
 		{
-			XmlDocument doc = CreateBaseDocument("Ok");
+			XDocument doc = CreateBaseDocument("Ok");
 
-			return doc.OuterXml;
+			return doc.ToString();
 		}
 
         public override string ToString()

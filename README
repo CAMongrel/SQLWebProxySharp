@@ -1,7 +1,8 @@
 SQLWebProxySharp
 ================
 
-SQLWebProxySharp is a simple web server using the .NET HttpListener. Its sole purpose is to proxy SQL queries over a local network to a MySQL instance running on the same server.
+SQLWebProxySharp is a simple web server using the .NET HttpListener. Its sole purpose is to proxy SQL queries over a local network to a MySQL instance running on the same server. 
+The libraries work fine under Mono, so you can use it on Linux and MacOS X. 
 
 There is currently no security mechanism, so I strongly recommend to NOT use this over a public network.
 
@@ -15,5 +16,5 @@ This project is written for a Metro style application. Since Metro apps can't ac
 TODO
 ====
 
- - Use serialization for request and response
+ - Use better serialization for request and response
  - Implement security mechanisms

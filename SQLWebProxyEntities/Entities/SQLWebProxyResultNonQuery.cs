@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using SQLWebProxySharpEntities.Types;
+using System.Xml.Linq;
 
 namespace SQLWebProxySharpEntities.Entities
 {
@@ -18,21 +19,21 @@ namespace SQLWebProxySharpEntities.Entities
 
 		public string ToXml()
 		{
-			XmlDocument doc = CreateBaseDocument("NonQuery");
+			XDocument doc = CreateBaseDocument("NonQuery");
 
-			XmlElement nonqueryElem = doc.CreateElement("NonQuery");
-            nonqueryElem.InnerXml = TypeSerializer.Serialize(Value);
-			doc.DocumentElement.AppendChild(nonqueryElem);
+			XElement nonqueryElem = new XElement("NonQuery");
+			nonqueryElem.Add(TypeSerializer.Serialize(Value));
+			doc.Root.Add(nonqueryElem);
 
-			return doc.OuterXml;
+			return doc.ToString();
 		}
 
-		public static SQLWebProxyResult FromXml(XmlDocument xml)
+		public static SQLWebProxyResult FromXml(XDocument xml)
 		{
             SQLWebProxyResultNonQuery result = new SQLWebProxyResultNonQuery();
 
-            XmlNode nonqueryElem = xml.DocumentElement.SelectSingleNode("NonQuery");
-            result.Value = (int)TypeSerializer.Deserialize(nonqueryElem.FirstChild);
+			XElement nonqueryElem = xml.Root.Element("NonQuery");
+			result.Value = (int)TypeSerializer.Deserialize(nonqueryElem.Elements().FirstOrDefault());
 
 			return result;
 		}
