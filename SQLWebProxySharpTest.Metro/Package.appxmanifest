@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="35d0e9f9-b555-4f95-aa64-9ae341787854" Publisher="CN=Henning" Version="1.0.0.0" />
+  <Identity Name="d947e31d-ef80-4cc5-85c1-d818c355c2a4" Publisher="CN=Henning" Version="1.0.0.0" />
   <Properties>
     <DisplayName>SQLWebProxySharpTest.Metro</DisplayName>
     <PublisherDisplayName>Henning</PublisherDisplayName>
-    <Logo>Images\StoreLogo.png</Logo>
+    <Logo>Assets\StoreLogo.png</Logo>
     <Description>SQLWebProxySharpTest.Metro</Description>
   </Properties>
   <Prerequisites>
@@ -12,19 +12,21 @@
     <OSMaxVersionTested>6.2</OSMaxVersionTested>
   </Prerequisites>
   <Resources>
-    <Resource Language="en-us" />
+    <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <Application Id="App" Executable="sqlwebproxysharptest.metro.exe" EntryPoint="SQLWebProxySharpTest.Metro.App">
-      <VisualElements DisplayName="SQLWebProxySharpTest.Metro" Logo="Images\Logo.png" SmallLogo="Images\SmallLogo.png" Description="SQLWebProxySharpTest.Metro" ForegroundText="light" BackgroundColor="#222222" InitialRotationPreference="portrait">
-        <SplashScreen Image="Images\SplashScreen.png" />
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="SQLWebProxySharpTest.Metro.App">
+      <VisualElements DisplayName="SQLWebProxySharpTest.Metro" Logo="Assets\Logo.png" SmallLogo="Assets\SmallLogo.png" Description="SQLWebProxySharpTest.Metro" ForegroundText="light" BackgroundColor="#222222">
+        <DefaultTile ShowName="allLogos" />
+        <SplashScreen Image="Assets\SplashScreen.png" />
+        <InitialRotationPreference>
+          <Rotation Preference="landscape" />
+          <Rotation Preference="landscapeFlipped" />
+        </InitialRotationPreference>
       </VisualElements>
     </Application>
   </Applications>
   <Capabilities>
-    <Capability Name="defaultWindowsCredentials" />
-    <Capability Name="internetClientServer" />
     <Capability Name="privateNetworkClientServer" />
-    <Capability Name="internetClient" />
   </Capabilities>
 </Package>
